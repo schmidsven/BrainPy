@@ -1,0 +1,56 @@
+
+
+
+Prioritaet = Zweifel/BesteAntwort;
+
+#Wissensdurst
+While( BesteAntwort < Zweifel ){
+    AktuelleAntwort = FragePerson(Frage);
+    AlteBesteAntwort = BesteAntwort;
+
+    #Frage konnte beantwortet werden
+    If(AktuelleAntwort != NULL){
+        Antworten.push(AktuelleAntwort);
+        BesteAntwort = FindeBesteAntwort(Frage);
+        #Vertrauenswaage
+        If(BesteAntwort != AlteBesteAntwort)
+        for each Person in Antworten[AlteBesteAntwort]{
+            Vertrauen[Person]-=1;
+        }
+    }
+
+};
+
+AnderWert(Person){
+    VertrauensbruchCounter[Person];      
+}
+
+# Bei Kommunikationsfähigkeit unter Einsatz der EorG-Identifizier-Funktion
+FragePerson(Frage){
+    Person  = FindeNaechstePerson();
+    If(Person==NULL){
+        Person=ICH;
+    }
+    if(Person nochnichtin Antworten){
+        Wertung = Vertrauen[Person]/Personenanzahl ;        
+        Antwort = nachfragen(Person, Frage);
+        Return (Person, Antwort, Wertung)
+    }else{
+        Return NULL;
+    }
+}
+
+# Fragen über Fragen
+nachfragen(Person, Frage){
+    if(Frage.substring = "wo"){
+        Antwort = Wo(Zeit, Ziel); #In Erfahrung bringen
+    }
+    if(Frage.substring = "was"){
+        Antwort = Was(Zeit, Ziel); #In Erfahrung bringen
+    }
+    if(Frage.substring = "warum"){
+        Antwort = Warum(Zeit, Ziel); #In Erfahrung bringen
+    }
+
+    Return Antwort;
+}

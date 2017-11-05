@@ -5,13 +5,12 @@ from collections import deque
 from nltk.corpus import wordnet
 
 #------------------GENOM----------------------------------------------
-class Identity:
-    def __init__(self, identity, relatesource, trustvalue):
-            self.identity = identity
-            self.relatesource = relatesource
+class Something:
+    def __init__(self, shortdata, longdata, trustvalue):
+            self.shortdata = shortdata
+            self.longdata = longdata
             self.trustvalue =  trustvalue
 
-#Was ist... Warum... , Verlangen, Grundbedurfnisse zum Uberleben
 class Question:
     def __init__(self, question, trustvalue):
             self.question = question
@@ -28,28 +27,20 @@ class Answer:
     def __repr__(self):
             return repr((self.answer, self.identity, self.trustvalue))
 
-def feel(feeling):
-    feelslike = "nothing"
-    if feeling == "energy":
+def getSensor(sensor):
+
+    if sensor == "energy":
         p = subprocess.Popen(["ioreg", "-rc", "AppleSmartBattery"], stdout=subprocess.PIPE)
         output = p.communicate()[0]
-
         o_max = [l for l in output.splitlines() if 'MaxCapacity' in l][0]
         o_cur = [l for l in output.splitlines() if 'CurrentCapacity' in l][0]
-
         b_max = float(o_max.rpartition('=')[-1].strip())
         b_cur = float(o_cur.rpartition('=')[-1].strip())
-
         charge = b_cur / b_max
         charge_threshold = int(math.ceil(10 * charge))
+        return charge
 
-        #Energiehungrig wenn Battery unter 10%
-        if charge < 0.1:
-            feelslike = "hunger"
-        else:
-            feelslike = "good"
-
-    elif feeling == "temperatureregulation":
+    elif sensor == "temperature":
         temperature = subprocess.check_output(["/Applications/TemperatureMonitor.app/Contents/MacOs/tempmonitor", "-c", "-l", "-a"]);
         temperature = temperature.splitlines()
         for tempsensor in temperature:
@@ -60,30 +51,30 @@ def feel(feeling):
             elif  tempsensor[0]=="SMC BATTERY":
                 outsidetemp=tempsensor[1].split(" ")
                 outsidetemp=outsidetemp[1]
+        return insidetemp
 
-        if int(insidetemp) > 45:
-            feelslike = "too hot"
-        elif int(insidetemp) < 38:
-            feelslike = "too cold"
-        else:
-            feelslike = "good"
+    elif sensor == "cpuload":
+        return str(psutil.cpu_percent())
 
-    elif feeling == "cpuusage":
-        feelslike = str(psutil.cpu_percent())
+    elif sensor == "look":
+        camdata=0
+        return camdata
 
-    return feelslike
+    elif sensor == "hear":
+        micdata=0
+        return micdata
 
-def look(questionStr):
-    return "nothing"
+    elif sensor == "feel":
+        preasure=0
+        return preasure
 
-def move(questionStr):
-    return "nothing"
+def setActor(action):
 
-def call(questionStr):
-    return "nothing"
+    if action == move:
+        return 0
 
-# Wissen, Antwort mit Wertung over Zweifel, Befriedigung
-KnowledgeThreshold = 100
+    elif action == call:
+        return 0
 
 # self-consiousness initially given to the answers from myself
 Poise = 100
@@ -91,16 +82,17 @@ Poise = 100
 # Amount of basic trust Me initially gives to other Identities
 BasicTrust = 100
 
-Identities = []
-Identities.append(Identity("Me", True, Poise))
-#Identities.append(Identity("Daddy", True, BasicTrust))
+Globalclock = 1
 
-questionQueue = deque()
-globalclock = 1
+Inventory = []
+Inventory.append(Something("Me", "BrainPy", Poise))
+#Identities.append(Identity("Daddy", BasicTrust))
 
-#questionQueue.append(Question("Me needs energy"))
-#questionQueue.append(Question("Me needs temperatureregulation"))
-questionQueue.append(Question("Me needs cpuusage", 0))
+QuestionQueue = deque()
+
+#QuestionQueue.append(Question("Me needs energy"))
+#QuestionQueue.append(Question("Me needs temperatureregulation"))
+QuestionQueue.append(Question("Me needs cpuusage", 0))
 
 
 
